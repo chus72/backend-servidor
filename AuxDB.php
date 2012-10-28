@@ -1,4 +1,7 @@
 <?php
+// Autor: Jesus Valladolid Rebollar
+// Proyecto: iBarco (Lexcode I)
+// 
 // AuxDB.php
 require_once("IAuxDB.php");
 class AuxDB implements IAuxDB
