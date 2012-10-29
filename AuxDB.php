@@ -13,7 +13,7 @@ private $strcon;
 
 // Conecta con el servidor
 function conectar() {
-	$this->strcon =  mysqli_connect("82.223.113.25", "qpe642", "iBarco0","qpe642")	
+	$this->strcon =  mysqli_connect("qpe642.marinaferry.es", "qpe642", "iBarco0","qpe642")	
 		or die("Error de aplicación: No conectó con la base de datos");
 	// se asigna el conjunto de caracteres
 	mysqli_set_charset($this->strcon, "latin1");
