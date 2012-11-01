@@ -1,7 +1,8 @@
 <?php
 
 require_once "AuxDB.php";
-
+$url = '';
+$clave = '';
 // clase Usuario
 
 class Usuario {
@@ -9,6 +10,7 @@ class Usuario {
 	private $UsuarioID;
 	private $Email;
 	private $Password;
+	
 	
 	// Funciones de la clase Usuario
 	function getUsuarioID() {
@@ -30,6 +32,7 @@ class Usuario {
 	}
 
 	function generar_txtAct($longitud,$especiales){ 
+		global $clave;
 		// Array con los valores a escojer
         $semilla = array(); 
         $semilla[] = array('a','e','i','o','u');  
@@ -186,11 +189,13 @@ class Usuario {
 
 	// Inserta el usuario en la tabla _temp a la espera de ser validado
 	function insertarUsuarioTemp() {
+		global $usb;
+		global $clave;
+
 		$db=new AuxDB();
 		$db->conectar();
 
 		$clave = $this->generar_txtAct(20,false);
-		global $url;
 		$url = "activar.php?id=" . $clave;
 		
 		$sql="INSERT INTO _temp(usuario, mail, password,fechaAlta,txtActivacion)";
@@ -208,5 +213,50 @@ class Usuario {
 		$db->desconectar();
 		return $ret;
 	} 
+
+	// Envia un mail al usuario para activar definitivamente su cuenta
+	function mailActivacion() {
+		global $url;
+		global $clave;
+
+		$url = "activar.php?id=" . $clave;
+		$dominio = "http://www.marinaferry.es/sandbox/iBarco/";
+		$destinatario = $this->getEmail(); 
+		$asunto = "iBarco. Activación de usuario"; 
+		$cuerpo = ' 
+				<html> 
+					<head> 
+	   				<title>iBarco - Activar usuario</title> 
+					</head> 
+					<body> 
+						Hola ';
+		$cuerpo .= $this->getUsuarioID;
+		$cuerpo .= '<p>Gracias por adquirir y registrarte en la aplicación <b>iBarco</b>.</p>
+				<p>Para completar el registro tienes que confirmar que has recibido el e-mail en el siguiente enlace:</p>
+				<p style=text-align:center><a href=';
+		$cuerpo .= $dominio . $url;
+		$cuerpo .= " target=_blank>Activa tu usuario</a></p></body></html>";
+		$cuerpo .= "<br><br><br>";
+		$cuerpo .= "Si tu correo no te permite ejecutarlo, copia y pega en tu navegador la siguiente dirección:<br>";
+		$cuerpo .= $dominio . $url;
+		$cuerpo .= "</body></html>";
+		//para el envío en formato HTML 
+		$headers = "MIME-Version: 1.0\r\n"; 
+		$headers .= "Content-type: text/html; charset=iso-8859-1\r\n"; 
+		//dirección del remitente 
+		$headers .= "From: iBarco <nombre@ibarco.com>\r\n";  //Hay que configurar un usario de correo
+		//dirección de respuesta, si queremos que sea distinta que la del remitente 
+		$headers .= "Reply-To: nombre@ibarco.com\r\n"; 
+		//ruta del mensaje desde origen a destino 
+		//$headers .= "Return-path: holahola@desarrolloweb.com\r\n"; 	
+		//direcciones que recibián copia 
+		//$headers .= "Cc: otra@ibarco.com\r\n"; 
+		//direcciones que recibirán copia oculta 
+		//$headers .= "Bcc: otra@ibarco.com\r\n"; 
+		//En localhost el envío de e-mail a veces no funciona, hay que configurar algunas cosas.
+		printf($destinatario);
+		$bool = mail($destinatario,$asunto,$cuerpo,$headers);
+		printf($bool);
+		}
 }
 ?>
