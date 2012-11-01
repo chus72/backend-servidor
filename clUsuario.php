@@ -154,14 +154,12 @@ class Usuario {
          		 } 
       		 } 
 	   	} 
-
   	 	if (!$mail_correcto) {
       		 return 'error'; 
 		}
       	// miro que ya no exista el mail en la BDD
       	$db = new AuxDB();
       	$db->conectar();
-	
 		$sql = "SELECT Usuario FROM Usuarios  WHERE Mail = '$email2'";
 		$rst = $db->ejecutarSQL($sql);
 
@@ -171,15 +169,14 @@ class Usuario {
 			$sql1 = "SELECT * FROM _temp where mail = '$email2'";
 			$rst1 = $db->ejecutarSQL($sql1);
 			if ($db->cantidadFilas($rst1)>0){
-				//printf("------- pasa 7 - %s ------",$db->cantidadFilas($rst1));
 				return 'existe';
 			} 
 			else {
-				if($email1 != $email2) {
-					return 'dif';
+				if($email == $email2) {
+					return $email2;
 				} 
 				else {
-					return $email2;
+					return 'dif';
 				}
 			}
 			
@@ -199,7 +196,7 @@ class Usuario {
 		$sql="INSERT INTO _temp(usuario, mail, password,fechaAlta,txtActivacion)";
 		$sql.=" VALUES ('" . mysql_escape_string($this->UsuarioID) . "', '";
 		$sql.= mysql_escape_string($this->Email) . "', '";
-		$sql.= mysql_escape_string($this->Password) ."','";
+		$sql.= md5(mysql_escape_string($this->Password)) ."','";
 		$sql.= mysql_escape_string(CURDATE)."','";
 		$sql.= mysql_escape_string($clave)."')";
 		
