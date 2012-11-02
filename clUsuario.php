@@ -202,7 +202,7 @@ class Usuario {
 		$sql.=" VALUES ('" . mysql_escape_string($this->UsuarioID) . "', '";
 		$sql.= mysql_escape_string($this->Email) . "', '";
 		$sql.= md5(mysql_escape_string($this->Password)) ."','";
-		$sql.= mysql_escape_string(CURDATE)."','";
+		$sql.= mysql_escape_string(CURDATE();)."','";
 		$sql.= mysql_escape_string($clave)."')";
 		
 		$db->ejecutarSQL($sql);
